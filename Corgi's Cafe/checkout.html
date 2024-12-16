@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url(assets/img/BG_Home.png);    
+  }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: hsl(353, 48%, 12%);
+    }
+
+    .summary {
+      margin-bottom: 20px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .payment-methods {
+      display: flex;
+      gap: 20px;
+    }
+    .payment-container {
+      justify-items: center;
+      align-items: center;
+      margin: 50px;
+    }
+
+    .payment-button {
+      width: 150px;
+      height: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .qris {
+      background-color: #f1f1f1;
+      color: white;
+    }
+
+    .cash {
+      background-color: #f1f1f1;
+      color: white;
+    }
+
+    .payment-button.clicked {
+      background-color: beige;
+    }
+
+    .payment-button:hover {
+      opacity: 0.8;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: hsl(317, 100%, 16%);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: hsl(318, 100%, 11%);
+    }
+
+    .back-btn {
+      background: hsl(39, 100%, 65%);
+      color: #333;
+    }
+
+    .back-btn:hover {
+      background: hsl(39, 67%, 54%);
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      color: green;
+      font-size: 1.2em;
+      margin-top: 20px;
+      border: 2px solid green;
+      background: #f0fff0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Checkout</h1>
+
+    <!-- Back Button -->
+    <button class="back-btn" id="back-btn">← Back to Shop</button>
+
+    <!-- Cart Summary -->
+    <div class="summary" id="cart-summary"></div>
+    <div class="total" id="cart-total"></div>
+
+    <!-- Payment Options -->
+    <div class="payment-method">
+      <h2>Payment Method</h2>
+    <div class="payment-container">
+    <div class="payment-methods">
+      <div class="payment-button qris" id="qris-button" onclick="toggleColor('qris')">
+        <img src="assets/img/qris.png" height="50px">
+      </div>
+      <div class="payment-button cash" id="cash-button" onclick="toggleColor('cash')">
+        <img src="assets/img/cash.png" height="50px">
+      </div>
+    </div>
+    </div>
+
+    <!-- Pay Button -->
+    <button id="pay-btn">Pay</button>
+
+    <!-- Success Message -->
+    <div class="success" id="success-msg">
+      Payment Successful! <br> Thank you for your order
+    </div>
+  </div>
+
+  <script>
+    // Ambil data cart dari localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartSummary = document.getElementById("cart-summary");
+    const cartTotal = document.getElementById("cart-total");
+    const payBtn = document.getElementById("pay-btn");
+    const successMsg = document.getElementById("success-msg");
+    const backBtn = document.getElementById("back-btn");
+
+    let total = 0;
+
+    // Render Rincian Cart
+    cart.forEach(item => {
+      const itemElement = document.createElement("div");
+      itemElement.classList.add("item");
+      itemElement.innerHTML = `
+        <span>(${item.quantity}x) ${item.name}</span>
+        <span>Rp ${(item.price * item.quantity).toLocaleString()}</span>
+      `;
+      cartSummary.appendChild(itemElement);
+      total += item.price * item.quantity;
+    });
+
+    // Tampilkan Total Harga
+    cartTotal.textContent = `Total: Rp ${total.toLocaleString()}`;
+
+    // Tombol Pay Event
+    payBtn.addEventListener("click", () => {
+      successMsg.style.display = "block";
+      payBtn.style.display = "none";
+    });
+
+    // Tombol Back Event
+    backBtn.addEventListener("click", () => {
+      window.close(); // Tutup tab checkout
+    });
+
+    function toggleColor(paymentMethod) {
+      const qrisButton = document.getElementById('qris-button');
+      const cashButton = document.getElementById('cash-button');
+
+      if (paymentMethod === 'qris') {
+        qrisButton.classList.toggle('clicked');
+        cashButton.classList.remove('clicked');
+      } else if (paymentMethod === 'cash') {
+        cashButton.classList.toggle('clicked');
+        qrisButton.classList.remove('clicked');
+      }
+    }
+  </script>
+</body>
+</html>
